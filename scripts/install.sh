@@ -136,6 +136,7 @@ function copy_files() {
   cp "${temp}/id_ed25519" /mnt/nix/persist/etc/ssh/ssh_host_ed25519_key
   cp "${temp}/id_ed25519.pub" /mnt/nix/persist/etc/ssh/ssh_host_ed25519_key.pub
   # so agenix can decrypt
+  mkdir -p /mnt/etc
   cp -r /mnt/nix/persist/etc/ssh /mnt/etc/ssh
   mkdir -p /mnt/home/andrei
   cp -r "${temp}/nixos" /mnt/home/andrei/nixos
