@@ -83,6 +83,7 @@ done
 function generate_ssh_keys() {
   green "Generating SSH key from Yubikey"
   yellow "Please insert the Yubikey..."
+  yellow "You will need to authorize with the Yubikey 3 times. Please don't remove the Yubikey."
   if ! ssh-keygen -K; then
     red "ERROR: Make sure you have your Yubikey inserted!"
     exit 1
@@ -102,11 +103,14 @@ function init_flakes() {
   chmod 600 "${temp}/id_ed25519_gh"
   cd "${temp}/secrets"
   agenix -d id_ed25519.age -i identities/yubikey-personal.txt > ${temp}/id_ed25519_gh
+  yellow "You can remove the Yubikey"
   cp "${temp}/secrets/id_ed25519.pub" "${temp}/id_ed25519_gh.pub"
   export GIT_SSH_COMMAND="ssh -i ${temp}/id_ed25519_gh"
   git clone -q "${config_repo}" "${temp}/nixos"
   green "Validating host"
-  if ! nix flake show "${temp}/nixos" --extra-experimental-features \"nix-command flakes\" --all-systems --json | yq ".nixosConfigurations | has(\"${target_hostname}\")" - || [ ! -d "${temp}/nixos/hosts/${target_hostname}" ]; then
+  host_in_flake="$(nix flake show "${temp}/nixos" --extra-experimental-features "nix-command flakes" --all-systems --json | yq ".nixosConfigurations | has(\"${target_hostname}\")" - )"
+  echo "${host_in_flake}"
+  if [ ${host_in_flake} != "true" ] || [ ! -d "${temp}/nixos/hosts/${target_hostname}" ]; then
     red "ERROR: Hostname ${target_hostname} doesn't exist in config flake or the hosts directory! Double-check the flake."
     exit 1
   fi
@@ -121,6 +125,11 @@ if [ -z "${target_hostname}" ]; then
 	red "ERROR: -n is required"
 	echo
 	help_and_exit
+fi
+
+if [ "$(whoami)" != "root" ]; then
+  red "ERROR: this script must run as root"
+  exit 1
 fi
 
 cd "${temp}"
