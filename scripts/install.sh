@@ -127,3 +127,4 @@ cd "${temp}"
 
 generate_ssh_keys
 init_flakes
+disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}"

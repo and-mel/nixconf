@@ -91,19 +91,20 @@
   } // (inputs.flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import inputs.nixpkgs { inherit system; };
     agenixPkg = inputs.agenix.packages."${system}".default;
+    diskoPkg = inputs.disko.packages."${system}".disko-install;
   in {
     packages.install = pkgs.stdenv.mkDerivation {
       pname = "install";
       version = "0.1.0";
       src = ./scripts;
-      buildInputs = [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg ];
+      buildInputs = [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg diskoPkg ];
       nativeBuildInputs = [ pkgs.makeWrapper ];
 
       installPhase = ''
         mkdir -p $out/bin
         cp install.sh $out/bin/install
         # Wrap the script to add dependencies to the PATH at runtime
-        wrapProgram $out/bin/install --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg ]}
+        wrapProgram $out/bin/install --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg diskoPkg ]}
       '';
     };
   }));
