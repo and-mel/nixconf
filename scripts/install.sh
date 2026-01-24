@@ -154,4 +154,4 @@ generate_ssh_keys
 init_flakes
 # disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}" --disk main "${main_device}"
 disko --mode destroy,format,mount -f "${temp}/nixos#${target_hostname}"
-TMPDIR=/mnt/Flake/tmp nixos-install --flake "${temp}/nixos#${target_hostname}"
+nixos-install --flake "${temp}/nixos#${target_hostname}"
