@@ -118,6 +118,10 @@ function init_flakes() {
   yq -i ".systems.${target_hostname} = \"$(head -1 ${temp}/id_ed25519.pub | xargs)\"" "${temp}/secrets/secrets.json"
   agenix -r -i "${temp}/id_ed25519_gh"
   cd "${temp}"
+  green "Generating hardware-configuration.nix"
+  nixos-generate-config --root "${temp}" --no-filesystems
+  rm -f "${temp}/nixos/hosts/${target_hostname}/hardware-configuration.nix"
+  cp "${temp}/etc/nixos/hardware-configuration.nix" "${temp}/nixos/hosts/${target_hostname}/hardware-configuration.nix"
 }
 
 # Validate required options
