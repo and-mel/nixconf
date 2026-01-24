@@ -10,7 +10,6 @@ main_device=""
 temp=$(mktemp -d)
 
 function cleanup() {
-  cat "${temp}/secrets/secrets.json"
   rm -rf "$temp"
 }
 trap cleanup exit
@@ -131,6 +130,18 @@ function init_flakes() {
   cd "${temp}"
 }
 
+function copy_files() {
+  green "Copying files"
+  mkdir -p /mnt/nix/persist/etc/ssh
+  cp "${temp}/id_ed25519" /mnt/nix/persist/etc/ssh/ssh_host_ed25519_key
+  cp "${temp}/id_ed25519.pub" /mnt/nix/persist/etc/ssh/ssh_host_ed25519_key.pub
+  # so agenix can decrypt
+  cp -r /mnt/nix/persist/etc/ssh /mnt/etc/ssh
+  mkdir -p /mnt/home/andrei
+  cp -r "${temp}/nixos" /mnt/home/andrei/nixos
+  cp -r "${temp}/secrets" /mnt/home/andrei/secrets
+}
+
 # Validate required options
 if [ -z "${target_hostname}" ]; then
 	red "ERROR: -n and -d are required"
@@ -153,5 +164,9 @@ cd "${temp}"
 generate_ssh_keys
 init_flakes
 # disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}" --disk main "${main_device}"
+green "Formatting disk"
 disko --mode destroy,format,mount -f "${temp}/nixos#${target_hostname}"
-nixos-install --flake "${temp}/nixos#${target_hostname}"
+copy_files
+green "Installing NixOS"
+nixos-install --flake "${temp}/nixos#${target_hostname}" --no-root-password
+green "NixOS is installed!"
