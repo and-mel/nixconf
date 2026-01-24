@@ -5,6 +5,7 @@ persist_dir="/nix/persist"
 config_repo="git@github.com:and-mel/nixconf.git"
 secrets_repo="git@github.com:and-mel/nixconf-secrets.git"
 target_hostname=""
+main_device=""
 
 temp=$(mktemp -d)
 
@@ -64,6 +65,9 @@ while [[ $# -gt 0 ]]; do
 	case "$1" in
 	-n=*)
 		target_hostname="${1#-n=}"
+		;;
+	-d=*)
+		main_device="${1#-n=}"
 		;;
 	--temp-override=*)
 		temp="${1#--temp-override=}"
@@ -128,10 +132,15 @@ function init_flakes() {
 }
 
 # Validate required options
-if [ -z "${target_hostname}" ]; then
-	red "ERROR: -n is required"
+if [ -z "${target_hostname}" ] || [ -z "${main_device}" ]; then
+	red "ERROR: -n and -d are required"
 	echo
 	help_and_exit
+fi
+
+if [ ! -e ${main_device} ]; then
+  red "ERROR: disk \"${main_device}\" not found"
+  exit 1
 fi
 
 if [ "$(whoami)" != "root" ]; then
@@ -143,4 +152,4 @@ cd "${temp}"
 
 generate_ssh_keys
 init_flakes
-disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}"
+disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}" --disk main "${main_device}"
