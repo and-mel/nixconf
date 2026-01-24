@@ -67,7 +67,7 @@ while [[ $# -gt 0 ]]; do
 		target_hostname="${1#-n=}"
 		;;
 	-d=*)
-		main_device="${1#-n=}"
+		main_device="${1#-d=}"
 		;;
 	--temp-override=*)
 		temp="${1#--temp-override=}"
