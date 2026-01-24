@@ -122,6 +122,9 @@ function init_flakes() {
   nixos-generate-config --root "${temp}" --no-filesystems
   rm -f "${temp}/nixos/hosts/${target_hostname}/hardware-configuration.nix"
   cp "${temp}/etc/nixos/hardware-configuration.nix" "${temp}/nixos/hosts/${target_hostname}/hardware-configuration.nix"
+  cd "${temp}/nixos"
+  git add .
+  cd "${temp}"
 }
 
 # Validate required options
