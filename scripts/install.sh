@@ -132,16 +132,16 @@ function init_flakes() {
 }
 
 # Validate required options
-if [ -z "${target_hostname}" ] || [ -z "${main_device}" ]; then
+if [ -z "${target_hostname}" ]; then
 	red "ERROR: -n and -d are required"
 	echo
 	help_and_exit
 fi
 
-if [ ! -e ${main_device} ]; then
-  red "ERROR: disk \"${main_device}\" not found"
-  exit 1
-fi
+# if [ ! -e ${main_device} ]; then
+#   red "ERROR: disk \"${main_device}\" not found"
+#   exit 1
+# fi
 
 if [ "$(whoami)" != "root" ]; then
   red "ERROR: this script must run as root"
@@ -152,4 +152,6 @@ cd "${temp}"
 
 generate_ssh_keys
 init_flakes
-disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}" --disk main "${main_device}"
+# disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}" --disk main "${main_device}"
+disko --mode destroy,format,mount -f "${temp}/nixos#${target_hostname}"
+TMPDIR=/mnt/Flake/tmp nixos-install --flake "${temp}/nixos#${target_hostname}"

@@ -91,7 +91,7 @@
   } // (inputs.flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import inputs.nixpkgs { inherit system; };
     agenixPkg = inputs.agenix.packages."${system}".default;
-    diskoPkg = inputs.disko.packages."${system}".disko-install;
+    diskoPkg = inputs.disko.packages."${system}".default;
   in {
     packages.install = pkgs.stdenv.mkDerivation {
       pname = "install";
