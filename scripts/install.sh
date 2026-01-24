@@ -106,7 +106,7 @@ function init_flakes() {
   export GIT_SSH_COMMAND="ssh -i ${temp}/id_ed25519_gh"
   git clone -q "${config_repo}" "${temp}/nixos"
   green "Validating host"
-  if ! nix flake show "${temp}/nixos" --all-systems --json | yq ".nixosConfigurations | has(\"${target_hostname}\")" - || [ ! -d "${temp}/nixos/hosts/${target_hostname}" ]; then
+  if ! nix flake show "${temp}/nixos" --extra-experimental-features \"nix-command flakes\" --all-systems --json | yq ".nixosConfigurations | has(\"${target_hostname}\")" - || [ ! -d "${temp}/nixos/hosts/${target_hostname}" ]; then
     red "ERROR: Hostname ${target_hostname} doesn't exist in config flake or the hosts directory! Double-check the flake."
     exit 1
   fi
