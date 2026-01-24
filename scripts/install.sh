@@ -94,23 +94,26 @@ function generate_ssh_keys() {
 function init_flakes() {
   green "Downloading flakes"
   export GIT_SSH_COMMAND="ssh -i ${temp}/id_ed25519_sk_rk"
-  if ! git clone "${secrets_repo}" "${temp}/secrets"; then
+  if ! git clone -q "${secrets_repo}" "${temp}/secrets"; then
     red "ERROR: Wrong Yubikey! Try using the right one."
     exit 1
   fi
   touch "${temp}/id_ed25519_gh"
+  chmod 600 "${temp}/id_ed25519_gh"
   cd "${temp}/secrets"
   agenix -d id_ed25519.age -i identities/yubikey-personal.txt > ${temp}/id_ed25519_gh
   cp "${temp}/secrets/id_ed25519.pub" "${temp}/id_ed25519_gh.pub"
   export GIT_SSH_COMMAND="ssh -i ${temp}/id_ed25519_gh"
-  git clone "${config_repo}" "${temp}/nixos"
+  git clone -q "${config_repo}" "${temp}/nixos"
   green "Validating host"
-  if ! nix flake show "${temp}/nixos" --all-systems --json | yq ".nixosConfigurations | has(\"${target_hostname}\")" - || [ ! -d "${temp}/nixos/hosts/${target_hostname}"]; then
+  if ! nix flake show "${temp}/nixos" --all-systems --json | yq ".nixosConfigurations | has(\"${target_hostname}\")" - || [ ! -d "${temp}/nixos/hosts/${target_hostname}" ]; then
     red "ERROR: Hostname ${target_hostname} doesn't exist in config flake or the hosts directory! Double-check the flake."
     exit 1
   fi
   green "Adding new ssh key to secrets.nix"
-  yq -i ".systems.${target_hostname} = '$(head -1 "${temp}/id_ed25519.pub")'" "${temp}/secrets/secrets.json"
+  yq -i ".systems.${target_hostname} = \"$(head -1 ${temp}/id_ed25519.pub | xargs)\"" "${temp}/secrets/secrets.json"
+  agenix -r -i "${temp}/id_ed25519_gh"
+  cd "${temp}"
 }
 
 # Validate required options
