@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, wrappers, ... }:
 
 let
   configH = pkgs.writeText "config.h" ''
@@ -23,6 +23,15 @@ let
     exec ${lib.getExe customDwlPackage} -s "${pkgs.slstatus}/bin/slstatus -s | ${pkgs.dwlb}/bin/dwlb -status-stdin all & ${pkgs.dwlb}/bin/dwlb -custom-title -font \"monospace:size=14\"" "$@"
   '';
 
+  swayIdle = wrappers.lib.wrapPackage {
+    inherit pkgs;
+    package = pkgs.swayidle;
+    flags = {
+      "-C" = toString (pkgs.writeText "config" ''
+        before-sleep 'swaylock -f -c 000000'
+      '');
+    };
+  };
 in
 
 {
@@ -59,16 +68,58 @@ in
       HandlePowerKey = "suspend";
     };
 
+    security.pam.services.swaylock = {
+      text = ''
+        auth include login
+      '';
+    };
+
     programs.dwl = {
       enable = true;
       package = dwlWithDwlbWrapper;
     };
 
-    environment.systemPackages = with pkgs; [
-      dwlb
-      wmenu
-      slstatus
-      bibata-cursors
+    # programs.dconf = {
+    #   enable = true;
+    #   profiles.user.databases = [
+    #     {
+    #       settings = {
+    #         "org/gnome/desktop/interface" = {
+    #           color-scheme = "prefer-dark";
+    #         };
+    #       };
+    #     }
+    #   ];
+    # };
+
+    qt = {
+      enable = true;
+      platformTheme = "gtk2";
+      style = "adwaita-dark";
+    };
+
+    # xdg.portal = {
+    #   enable = true;
+    #   config = {
+    #     common = {
+    #       default = [
+    #         "gtk"
+    #       ];
+    #     };
+    #   };
+    # };
+
+    environment.sessionVariables = {
+      GTK_THEME = "Adwaita-dark";
+    };
+
+    environment.systemPackages = [
+      pkgs.dwlb
+      pkgs.wmenu
+      pkgs.slstatus
+      pkgs.bibata-cursors
+      pkgs.swaylock
+      swayIdle
     ];
   };
 }

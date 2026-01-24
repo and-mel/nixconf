@@ -2,9 +2,10 @@
   description = "NixOS Configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     wrappers.url = "github:Lassulus/wrappers";
     impermanence.url = "github:nix-community/impermanence";
+    flake-utils.url = "github:numtide/flake-utils";
 
     disko = {
       url = "github:nix-community/disko";
@@ -40,6 +41,11 @@
         hostname = "nixos";
         stateVersion = "25.05";
         system = "x86_64-linux";
+      }
+      {
+        hostname = "nixmac";
+        stateVersion = "25.05";
+        system = "aarch64-linux";
       }
     ];
 
@@ -82,5 +88,23 @@
         };
       }
     ) { } hosts;
-  };
+  } // (inputs.flake-utils.lib.eachDefaultSystem (system: let
+    pkgs = import inputs.nixpkgs { inherit system; };
+    agenixPkg = inputs.agenix.packages."${system}".default;
+  in {
+    packages.install = pkgs.stdenv.mkDerivation {
+      pname = "install";
+      version = "0.1.0";
+      src = ./scripts;
+      buildInputs = [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+
+      installPhase = ''
+        mkdir -p $out/bin
+        cp install.sh $out/bin/install
+        # Wrap the script to add dependencies to the PATH at runtime
+        wrapProgram $out/bin/install --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg ]}
+      '';
+    };
+  }));
 }

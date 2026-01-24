@@ -14,4 +14,11 @@
   cliApps.enable = true;
   apps.enable = true;
   games.enable = true;
+
+  networking = {
+    interfaces.enp42s0 = {
+      wakeOnLan.enable = true;
+    };
+    firewall.allowedUDPPorts = [ 9 ];
+  };
 }

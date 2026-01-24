@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }: {
+{ lib, config, user, pkgs, ... }: {
   options = {
     apps.enable = lib.mkEnableOption "enables core apps";
     cliApps.enable = lib.mkEnableOption "enables core CLIs";
@@ -20,5 +20,14 @@
     ] ++ lib.optionals config.games.enable [
       prismlauncher
     ];
+
+    programs._1password-gui = lib.mkIf config.apps.enable {
+      enable = true;
+      polkitPolicyOwners = [ user ];
+    };
+
+    programs._1password = lib.mkIf config.cliApps.enable {
+      enable = true;
+    };
   };
 }

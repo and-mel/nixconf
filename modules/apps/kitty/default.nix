@@ -5,7 +5,7 @@ let
     inherit pkgs;
     package = pkgs.kitty;
     flags = {
-      "--config" = ./kitty.conf;
+      "--config" = toString ./kitty.conf;
     };
   };
 

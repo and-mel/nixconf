@@ -6,7 +6,7 @@
       ".ssh/config".text = ''
         Host github.com
           User git
-          IdentityFile ~/.ssh/id_ed25519_github
+          IdentityFile ~/.ssh/id_ed25519_sk
           IdentitiesOnly yes
       '';
     };

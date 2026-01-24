@@ -13,6 +13,8 @@
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nixpkgs.config.allowUnfree = true;
+
   time.timeZone = "America/New_York";
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -29,7 +31,12 @@
 
   services.speechd.enable = lib.mkForce false;
 
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+    };
+  };
 
   users.mutableUsers = false;
   users.users.${user} = {
@@ -37,6 +44,10 @@
     extraGroups = [ "wheel" "networkmanager" ];
     hashedPasswordFile = config.age.secrets.passwd-andrei.path;
   };
+
+  environment.systemPackages = with pkgs; [
+    age-plugin-fido2-hmac
+  ];
 
   users.defaultUserShell = pkgs.zsh;
 
