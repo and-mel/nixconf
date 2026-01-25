@@ -44,6 +44,23 @@ function yes_or_no() {
 	done
 }
 
+function retry() {
+  local n=1
+  local max_retries=3
+  local delay=2
+  local command="$@"
+
+  until $command; do
+    if [[ $n -ge $max_retries ]]; then
+      red "Error: Command failed after $max_retries attempts." >&2
+      return 1
+    fi
+    red "Command failed. Attempt $n/$max_retries, retrying in $delay seconds..." >&2
+    ((n++))
+    sleep $delay
+  done
+}
+
 function help_and_exit() {
 	echo
 	echo "Installs NixOS using this nix-config."
@@ -93,19 +110,22 @@ function generate_ssh_keys() {
   fi
   green "Generating host key"
   ssh-keygen -t ed25519 -N "" -f "${temp}/id_ed25519" -q -C ""
+  green "Adding GitHub to known hosts"
+  ssh-keyscan -p 22 "github.com" >>~/.ssh/known_hosts || true
 }
 
 function init_flakes() {
+  timestamp=$(date +%s)
   green "Downloading flakes"
   export GIT_SSH_COMMAND="ssh -i ${temp}/id_ed25519_sk_rk"
-  if ! git clone -q "${secrets_repo}" "${temp}/secrets"; then
+  if ! retry git clone -q "${secrets_repo}" "${temp}/secrets"; then
     red "ERROR: Wrong Yubikey! Try using the right one."
     exit 1
   fi
   touch "${temp}/id_ed25519_gh"
   chmod 600 "${temp}/id_ed25519_gh"
   cd "${temp}/secrets"
-  agenix -d id_ed25519.age -i identities/yubikey-personal.txt > ${temp}/id_ed25519_gh
+  retry agenix -d id_ed25519.age -i identities/yubikey-personal.txt > ${temp}/id_ed25519_gh
   yellow "You can remove the Yubikey"
   cp "${temp}/secrets/id_ed25519.pub" "${temp}/id_ed25519_gh.pub"
   export GIT_SSH_COMMAND="ssh -i ${temp}/id_ed25519_gh"
@@ -120,6 +140,8 @@ function init_flakes() {
   green "Adding new ssh key to secrets.nix"
   yq -i ".systems.${target_hostname} = \"$(head -1 ${temp}/id_ed25519.pub | xargs)\"" "${temp}/secrets/secrets.json"
   agenix -r -i "${temp}/id_ed25519_gh"
+  git add .
+  git commit -m "[installer] ${timestamp}: Rekey for host ${target_hostname}"
   cd "${temp}"
   green "Generating hardware-configuration.nix"
   nixos-generate-config --root "${temp}" --no-filesystems
@@ -127,6 +149,29 @@ function init_flakes() {
   cp "${temp}/etc/nixos/hardware-configuration.nix" "${temp}/nixos/hosts/${target_hostname}/hardware-configuration.nix"
   cd "${temp}/nixos"
   git add .
+  git commit -m "[installer] ${timestamp}: Add hardware configuration for host ${target_hostname}"
+  cd "${temp}"
+  green "Pre-installation finished."
+}
+
+function prepare_git() {
+  yellow "Some destructive actions are about to occur!"
+  yellow " - New decryption key and hardware configuration will be pushed to GitHub."
+  yellow " - Disk will be erased and formatted"
+  yellow " - Nix flake and secrets will be copied to disk."
+  yellow " - NixOS will be installed."
+  if ! yes_or_no "Do you want to continue?"; then
+    red "Installation canceled by user"
+    exit 0
+  fi
+  cd "${temp}/secrets"
+  green "push secrets"
+  git push -q
+  cd "${temp}/nixos"
+  green "nix flake update mysecrets"
+  nix flake update mysecrets --extra-experimental-features "nix-command flakes"
+  green "push nixos"
+  git push -q
   cd "${temp}"
 }
 
@@ -165,6 +210,7 @@ cd "${temp}"
 generate_ssh_keys
 init_flakes
 # disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}" --disk main "${main_device}"
+prepare_git
 green "Formatting disk"
 disko --mode destroy,format,mount -f "${temp}/nixos#${target_hostname}"
 copy_files
