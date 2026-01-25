@@ -167,12 +167,12 @@ function prepare_git() {
   fi
   cd "${temp}/secrets"
   green "push secrets"
-  git push -q || true
+  git push -q
   cd "${temp}/nixos"
   green "nix flake update mysecrets"
   nix flake update mysecrets --extra-experimental-features "nix-command flakes"
   green "push nixos"
-  git push -q || true
+  git push -q
   cd "${temp}"
 }
 
