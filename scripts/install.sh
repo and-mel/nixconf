@@ -205,7 +205,7 @@ if [ -z "${target_hostname}" ]; then
 	help_and_exit
 fi
 
-if [ "$(whoami)" != "root" ] || sudo -i ; then
+if [ "$(whoami)" != "root" ]; then
   red "ERROR: this script must run as root"
   exit 1
 fi
