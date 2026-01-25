@@ -2,6 +2,8 @@
 
 let
   configH = pkgs.writeText "config.h" ''
+    #define MODKEY ${config.dwl.modkey}
+
     ${builtins.readFile ./config.h}
 
     static const MonitorRule monrules[] = {
@@ -43,6 +45,11 @@ in
       default = ''
         { NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
       '';
+    };
+    dwl.modkey = lib.mkOption {
+      type = lib.types.str;
+      description = "Modkey for dwl shortcuts";
+      default = "WLR_MODIFIER_LOGO";
     };
   };
 

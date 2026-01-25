@@ -82,9 +82,6 @@ while [[ $# -gt 0 ]]; do
 	-n=*)
 		target_hostname="${1#-n=}"
 		;;
-	-d=*)
-		main_device="${1#-d=}"
-		;;
 	--temp-override=*)
 		temp="${1#--temp-override=}"
 		;;
@@ -192,32 +189,35 @@ function copy_files() {
   cp -r "${temp}/secrets" /mnt/home/andrei/secrets
 }
 
+function install_nixos() {
+  green "Formatting disk"
+  disko --mode destroy,format,mount -f "${temp}/nixos#${target_hostname}"
+  copy_files
+  green "Installing NixOS"
+  nixos-install --flake "${temp}/nixos#${target_hostname}" --no-root-password
+  green "NixOS is installed!"
+}
+
 # Validate required options
 if [ -z "${target_hostname}" ]; then
-	red "ERROR: -n and -d are required"
+	red "ERROR: -n is required"
 	echo
 	help_and_exit
 fi
 
-# if [ ! -e ${main_device} ]; then
-#   red "ERROR: disk \"${main_device}\" not found"
-#   exit 1
-# fi
-
-if [ "$(whoami)" != "root" ]; then
+if [ "$(whoami)" != "root" ] || sudo -i ; then
   red "ERROR: this script must run as root"
   exit 1
 fi
 
 cd "${temp}"
 
+echo "This script will install NixOS on ${target_hostname}."
+yellow "generate_ssh_keys"
 generate_ssh_keys
+yellow "init_flakes"
 init_flakes
-# disko-install --write-efi-boot-entries --flake "${temp}/nixos#${target_hostname}" --disk main "${main_device}"
+yellow "prepare_git"
 prepare_git
-green "Formatting disk"
-disko --mode destroy,format,mount -f "${temp}/nixos#${target_hostname}"
-copy_files
-green "Installing NixOS"
-nixos-install --flake "${temp}/nixos#${target_hostname}" --no-root-password
-green "NixOS is installed!"
+yellow "install_nixos"
+install_nixos
