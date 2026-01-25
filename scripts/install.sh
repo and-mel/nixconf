@@ -142,7 +142,7 @@ function init_flakes() {
   yq -i ".systems.${target_hostname} = \"$(head -1 ${temp}/id_ed25519.pub | xargs)\"" "${temp}/secrets/secrets.json"
   agenix -r -i "${temp}/id_ed25519_gh"
   git add .
-  git commit -m "[installer] ${timestamp}: Rekey for host ${target_hostname}"
+  git commit -m "[installer] ${timestamp}: Rekey for host ${target_hostname}" || true
   cd "${temp}"
   green "Generating hardware-configuration.nix"
   nixos-generate-config --root "${temp}" --no-filesystems
@@ -150,7 +150,7 @@ function init_flakes() {
   cp "${temp}/etc/nixos/hardware-configuration.nix" "${temp}/nixos/hosts/${target_hostname}/hardware-configuration.nix"
   cd "${temp}/nixos"
   git add .
-  git commit -m "[installer] ${timestamp}: Add hardware configuration for host ${target_hostname}"
+  git commit -m "[installer] ${timestamp}: Add hardware configuration for host ${target_hostname}" || true
   cd "${temp}"
   green "Pre-installation finished."
 }
@@ -167,12 +167,12 @@ function prepare_git() {
   fi
   cd "${temp}/secrets"
   green "push secrets"
-  git push -q
+  git push -q || true
   cd "${temp}/nixos"
   green "nix flake update mysecrets"
   nix flake update mysecrets --extra-experimental-features "nix-command flakes"
   green "push nixos"
-  git push -q
+  git push -q || true
   cd "${temp}"
 }
 
