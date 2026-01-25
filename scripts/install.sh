@@ -115,6 +115,8 @@ function generate_ssh_keys() {
 }
 
 function init_flakes() {
+  export GIT_AUTHOR_NAME="NixOS Installer"
+  export GIT_AUTHOR_EMAIL="88601482+and-mel@users.noreply.github.com"
   timestamp=$(date +%s)
   green "Downloading flakes"
   export GIT_SSH_COMMAND="ssh -i ${temp}/id_ed25519_sk_rk"
