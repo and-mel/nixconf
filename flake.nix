@@ -43,6 +43,11 @@
         system = "x86_64-linux";
       }
       {
+        hostname = "t480s";
+        stateVersion = "25.05";
+        system = "x86_64-linux";
+      }
+      {
         hostname = "nixmac";
         stateVersion = "25.05";
         system = "aarch64-linux";
