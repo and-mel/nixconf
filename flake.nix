@@ -22,6 +22,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-anywhere = {
+      url = "github:nix-community/nixos-anywhere";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mysecrets = {
       url = "git+ssh://git@github.com/and-mel/nixconf-secrets.git?ref=main&shallow=1";
       flake = false;
@@ -97,6 +102,7 @@
     pkgs = import inputs.nixpkgs { inherit system; };
     agenixPkg = inputs.agenix.packages."${system}".default;
     diskoPkg = inputs.disko.packages."${system}".default;
+    nixosAnywherePkg = inputs.nixos-anywhere.packages."${system}".default;
   in {
     packages.install = pkgs.stdenv.mkDerivation {
       pname = "install";
@@ -110,6 +116,21 @@
         cp install.sh $out/bin/install
         # Wrap the script to add dependencies to the PATH at runtime
         wrapProgram $out/bin/install --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg diskoPkg ]}
+      '';
+    };
+
+    packages.deploy = pkgs.stdenv.mkDerivation {
+      pname = "deploy";
+      version = "0.1.0";
+      src = ./scripts;
+      buildInputs = [ pkgs.yq-go pkgs.git nixosAnywherePkg agenixPkg ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+
+      installPhase = ''
+        mkdir -p $out/bin
+        cp deploy.sh $out/bin/deploy
+        # Wrap the script to add dependencies to the PATH at runtime
+        wrapProgram $out/bin/deploy --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yq-go pkgs.git nixosAnywherePkg agenixPkg ]}
       '';
     };
   }));
