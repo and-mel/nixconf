@@ -10,6 +10,7 @@
   networking = {
     hostName = hostname;
     networkmanager.enable = true;
+    firewall.enable = false;
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
