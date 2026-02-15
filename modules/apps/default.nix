@@ -15,6 +15,7 @@
     environment.systemPackages = with pkgs;
     lib.optionals config.apps.enable [
       zed-editor
+      vesktop
     ] ++ lib.optionals config.cliApps.enable [
       neovim
     ] ++ lib.optionals config.games.enable [

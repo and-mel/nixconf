@@ -127,9 +127,6 @@ static const char *menucmd[] = { "wmenu-run", "-f", "monospace 14", "-l", "10", 
 static const char *volumeup[]      = { "wpctl",   "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+",  NULL };
 static const char *volumedown[]    = { "wpctl",   "set-volume",  "@DEFAULT_AUDIO_SINK@", "5%-",  NULL };
 static const char *mutevolume[]    = { "wpctl",   "set-mute",  "@DEFAULT_AUDIO_SINK@",  "toggle",  NULL };
-static const char *cursorleft[]    = { "wlrctl",   "pointer",  "move", "-1920",     NULL };
-static const char *cursorright[]    = { "wlrctl",   "pointer", "move", "1920",        NULL };
-static const char *wlrwhichkey[]    = { "wlr-which-key",  NULL };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
@@ -137,16 +134,17 @@ static const Key keys[] = {
 	{ 0,                         XKB_KEY_XF86AudioRaiseVolume, spawn, {.v = volumeup   } },
 	{ 0,                         XKB_KEY_XF86AudioLowerVolume, spawn, {.v = volumedown } },
 	{ 0,                         XKB_KEY_XF86AudioMute, spawn, {.v = mutevolume } },
-	{ MODKEY,                    XKB_KEY_z,          spawn,          {.v = wlrwhichkey} },
 	{ MODKEY,                    XKB_KEY_r,          spawn,          {.v = menucmd} },
 	{ MODKEY,                    XKB_KEY_Return,     spawn,          {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_space,       spawn,          SHCMD("playerctl play-pause") },
+	{ MODKEY,                    XKB_KEY_XF86AudioPlay,      spawn,  SHCMD("playerctl play-pause") },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
-	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+//	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
+//	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+    { MODKEY,                    XKB_KEY_d,          spawn,          {.v = programsmenu} },
+    { MODKEY,                    XKB_KEY_q,          spawn,          {.v = powermenu} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
 	{ MODKEY |WLR_MODIFIER_SHIFT,                    XKB_KEY_Return,     zoom,           {0} },
@@ -162,8 +160,6 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY,                    XKB_KEY_comma,      spawn,          {.v = cursorleft} },
-	{ MODKEY,                    XKB_KEY_period,     spawn,          {.v = cursorright} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = WLR_DIRECTION_RIGHT} },
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),

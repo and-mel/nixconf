@@ -1,8 +1,64 @@
 { pkgs, lib, config, wrappers, ... }:
 
 let
+  mkMenu = menu: let
+    configFile = builtins.toFile "config.yaml"
+      (lib.generators.toYAML {} {
+        anchor = "center";
+        background = "#282828d0";
+        color = "#fbf1c7";
+        border = "#8ec07c";
+        separator = " ➜ ";
+        border_width = 2;
+        corner_r = 10;
+        inherit menu;
+      });
+    in
+      pkgs.writeScript "wlr-menu" ''
+        exec ${pkgs.wlr-which-key}/bin/wlr-which-key ${configFile}
+      '';
+
+  programsMenu = mkMenu [
+    {
+      key = "f";
+      desc = "Firefox";
+      cmd = "firefox-esr";
+    }
+    {
+      key = "p";
+      desc = "Prism Launcher";
+      cmd = "prismlauncher";
+    }
+    {
+      key = "z";
+      desc = "Zed";
+      cmd = "zeditor";
+    }
+  ];
+
+  powerMenu = mkMenu [
+    {
+      key = "s";
+      desc = "Suspend";
+      cmd = "systemctl suspend";
+    }
+    {
+      key = "p";
+      desc = "Power off";
+      cmd = "systemctl poweroff";
+    }
+    {
+      key = "r";
+      desc = "Reboot";
+      cmd = "systemctl reboot";
+    }
+  ];
+
   configH = pkgs.writeText "config.h" ''
     #define MODKEY ${config.dwl.modkey}
+
+    static const char *programsmenu[]    = { "${programsMenu}",  NULL };
+    static const char *powermenu[]    = { "${powerMenu}",  NULL };
 
     ${builtins.readFile ./config.h}
 
@@ -10,20 +66,17 @@ let
       ${config.dwl.monitor}
     };
   '';
+
   customDwlPackage = (pkgs.dwl.override {
     inherit configH;
   }).overrideAttrs (oldAttrs: {
     patches = (oldAttrs.patches or []) ++ [
       ./movestack.patch
       ./cursortheme.patch
+      ./restore-monitor.patch
     ];
     buildInputs = oldAttrs.buildInputs or [] ++ [ pkgs.libdrm pkgs.fcft ];
   });
-
-  dwlWithDwlbWrapper = pkgs.writeScriptBin "dwl" ''
-    #!/bin/sh
-    exec ${lib.getExe customDwlPackage} -s "${pkgs.slstatus}/bin/slstatus -s | ${pkgs.dwlb}/bin/dwlb -status-stdin all & ${pkgs.dwlb}/bin/dwlb -custom-title -font \"monospace:size=14\"" "$@"
-  '';
 
   swayIdle = wrappers.lib.wrapPackage {
     inherit pkgs;
@@ -34,6 +87,18 @@ let
       '');
     };
   };
+
+  dwlStartup = pkgs.writeScript "dwl-startup" ''
+    #!/bin/sh
+    ${pkgs.slstatus}/bin/slstatus -s | ${pkgs.dwlb}/bin/dwlb -status-stdin all & ${pkgs.dwlb}/bin/dwlb -custom-title -font "monospace:size=14" &
+    ${swayIdle}/bin/swayidle &
+    exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
+  '';
+
+  dwlWithDwlbWrapper = pkgs.writeScriptBin "dwl-wrapped" ''
+    #!/bin/sh
+    exec ${lib.getExe customDwlPackage} -s "${dwlStartup}" "$@"
+  '';
 in
 
 {
@@ -65,7 +130,7 @@ in
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.tuigreet}/bin/tuigreet -t -c ${dwlWithDwlbWrapper}/bin/dwl";
+          command = "${pkgs.tuigreet}/bin/tuigreet -t -c ${dwlWithDwlbWrapper}/bin/dwl-wrapped";
         };
       };
       useTextGreeter = true;
@@ -118,6 +183,7 @@ in
 
     environment.sessionVariables = {
       GTK_THEME = "Adwaita-dark";
+      XDG_CURRENT_DESKTOP="wlroots";
     };
 
     environment.systemPackages = [
@@ -126,7 +192,31 @@ in
       pkgs.slstatus
       pkgs.bibata-cursors
       pkgs.swaylock
+      pkgs.slurp
+      pkgs.grim
+      pkgs.wlr-which-key
       swayIdle
     ];
+
+    xdg.portal = {
+      enable = true;
+      config = {
+        dwl = {
+          default = [
+            "wlr"
+          ];
+        };
+      };
+      wlr = {
+        enable = true;
+        settings = {
+          screencast = {
+            max_fps = 60;
+            chooser_type = "simple";
+            chooser_cmd = "${pkgs.slurp}/bin/slurp -f 'Monitor: %o' -or";
+          };
+        };
+      };
+    };
   };
 }
