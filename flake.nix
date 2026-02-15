@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    pinned-nixpkgs.url = "github:nixos/nixpkgs/a82ccc39b39b621151d6732718e3e250109076fa";
     wrappers.url = "github:Lassulus/wrappers";
     impermanence.url = "github:nix-community/impermanence";
     flake-utils.url = "github:numtide/flake-utils";
@@ -72,8 +73,13 @@
       }:
       inputs.nixpkgs.lib.nixosSystem {
         inherit system;
+
         specialArgs = {
           wrappers = inputs.wrappers;
+          pinnedPkgs = import inputs.pinned-nixpkgs {
+            inherit system;
+            config = { allowUnfree = true; }; # adjust as needed
+          };
           inherit
             inputs
             stateVersion
