@@ -43,6 +43,9 @@
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ];
     hashedPasswordFile = config.age.secrets.passwd-andrei.path;
+    openssh.authorizedKeys.keys = [
+      "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIACw2AMBYcoTWNCWZKYlliS3Naw4kFuhAxFr3LDmsdnBAAAABHNzaDo="
+    ];
   };
 
   environment.systemPackages = with pkgs; [

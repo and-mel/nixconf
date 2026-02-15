@@ -212,10 +212,10 @@
     "mysecrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1771128547,
-        "narHash": "sha256-Qsrjwf4BJuf3wtOe+9wRU9mVAIDDO905yqfXeKl8xTo=",
+        "lastModified": 1771176680,
+        "narHash": "sha256-Vc5cuypbHV8ROliLkCEePrj35xxKMhpyocb7v9hn49k=",
         "ref": "main",
-        "rev": "259ccc57bbac7b6be205e2733fff145a9c37f9c4",
+        "rev": "2958389a1fa28c27d88e7e0c9cb4c2b529127cca",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/and-mel/nixconf-secrets.git"

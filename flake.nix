@@ -53,6 +53,11 @@
         system = "x86_64-linux";
       }
       {
+        hostname = "mcserver";
+        stateVersion = "25.05";
+        system = "x86_64-linux";
+      }
+      {
         hostname = "nixmac";
         stateVersion = "25.05";
         system = "aarch64-linux";
