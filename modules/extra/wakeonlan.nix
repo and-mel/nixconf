@@ -19,7 +19,7 @@
 
     users.users.${user}.openssh.authorizedKeys = lib.mkIf config.wake-on-lan.hass-control.enable {
       keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIELAD2Z1NGN5YAf1clMgOwbEBuX+lfI9V9ftJsTnVK3k homeassistant";
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIELAD2Z1NGN5YAf1clMgOwbEBuX+lfI9V9ftJsTnVK3k homeassistant"
       ];
     };
 

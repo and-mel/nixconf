@@ -14,9 +14,4 @@
   cliApps.enable = true;
   apps.enable = true;
   games.enable = true;
-  wake-on-lan = {
-    enable = true;
-    interface = "enp0s31f6";
-    hass-control.enable = true;
-  };
 }
