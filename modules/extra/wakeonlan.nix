@@ -27,15 +27,11 @@
       extraRules = [{
         commands = [
           {
-            command = "${pkgs.systemd}/bin/systemctl suspend";
+            command = "/run/current-system/sw/bin/systemctl reboot";
             options = [ "NOPASSWD" ];
           }
           {
-            command = "${pkgs.systemd}/bin/reboot";
-            options = [ "NOPASSWD" ];
-          }
-          {
-            command = "${pkgs.systemd}/bin/poweroff";
+            command = "/run/current-system/sw/bin/systemctl poweroff";
             options = [ "NOPASSWD" ];
           }
         ];
