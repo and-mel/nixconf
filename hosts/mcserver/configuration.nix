@@ -6,6 +6,11 @@
   cliApps.enable = true;
   minecraft-server.enable = true;
   minecraft-server.ip = "192.168.1.152";
+  wake-on-lan = {
+    enable = true;
+    interface = "enp42s0";
+    hass-control.enable = true;
+  };
 
   networking = {
     interfaces.enp42s0 = {

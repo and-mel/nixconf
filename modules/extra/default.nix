@@ -4,5 +4,6 @@
     ./minecraft-server
     ./podman
     ./fonts.nix
+    ./wakeonlan.nix
   ];
 }
