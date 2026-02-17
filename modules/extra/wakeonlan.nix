@@ -35,7 +35,7 @@
             options = [ "NOPASSWD" ];
           }
         ];
-        groups = [ "wheel" ];
+        users = [ "${user}" ];
       }];
     };
   };
