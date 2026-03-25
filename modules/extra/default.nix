@@ -1,7 +1,7 @@
-{ lib, config, ... }: {
+{
   imports = [
     ./dwl
-    ./minecraft-server
+    # ./minecraft-server
     ./podman
     ./fonts.nix
     ./wakeonlan.nix

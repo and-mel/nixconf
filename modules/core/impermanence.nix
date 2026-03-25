@@ -35,18 +35,12 @@
     directories = [
       "/etc" # System configuration (Keep this here for persistence via bind-mount)
       "/var/lib/nixos"
+      "/var/lib/mysql"
       # "/var/lib/minecraft"
       "/var/spool" # Mail queues, cron jobs
       "/var/log"
       "/srv" # Web server data, etc.
       "/root"
-    ] ++ lib.optionals config.minecraft-server.enable  [
-      {
-        directory = "/var/lib/minecraft";
-        user = "minecraft";
-        group = "minecraft";
-        mode = "u=rwx,g=rx,o=";
-      }
     ];
     files = [
     ];

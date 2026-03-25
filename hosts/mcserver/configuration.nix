@@ -8,7 +8,7 @@
   minecraft-server.ip = "192.168.1.152";
   wake-on-lan = {
     enable = true;
-    interface = "enp42s0";
+    interface = "enp33s0";
     hass-control.enable = true;
   };
 
@@ -16,6 +16,12 @@
     interfaces.enp42s0 = {
       ipv4.addresses = [{
         address = "192.168.1.152";
+        prefixLength = 24;
+      }];
+    };
+    interfaces.enp33s0 = {
+      ipv4.addresses = [{
+        address = "192.168.3.152";
         prefixLength = 24;
       }];
     };

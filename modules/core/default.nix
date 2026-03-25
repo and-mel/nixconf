@@ -51,6 +51,8 @@
 
   environment.systemPackages = with pkgs; [
     age-plugin-fido2-hmac
+    nil
+    nixd
   ];
 
   users.defaultUserShell = pkgs.zsh;

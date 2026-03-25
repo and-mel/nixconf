@@ -3,10 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-    pinned-nixpkgs.url = "github:nixos/nixpkgs/a82ccc39b39b621151d6732718e3e250109076fa";
+    # pinned-nixpkgs.url = "github:nixos/nixpkgs/a82ccc39b39b621151d6732718e3e250109076fa";
     wrappers.url = "github:Lassulus/wrappers";
     impermanence.url = "github:nix-community/impermanence";
     flake-utils.url = "github:numtide/flake-utils";
+    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
 
     disko = {
       url = "github:nix-community/disko";
@@ -32,117 +33,160 @@
       url = "git+ssh://git@github.com/and-mel/nixconf-secrets.git?ref=main&shallow=1";
       flake = false;
     };
+
+    nixconf-mcserver.url = "git+ssh://git@github.com/and-mel/nixconf-mcserver.git?ref=main&shallow=1";
   };
 
-  outputs = inputs: let
+  outputs =
+    inputs:
+    let
 
-    user = "andrei";
-    hosts = [
-      {
-        hostname = "protego";
-        stateVersion = "25.05";
-        system = "x86_64-linux";
-      }
-      {
-        hostname = "nixos";
-        stateVersion = "25.05";
-        system = "x86_64-linux";
-      }
-      {
-        hostname = "t480s";
-        stateVersion = "25.05";
-        system = "x86_64-linux";
-      }
-      {
-        hostname = "mcserver";
-        stateVersion = "25.05";
-        system = "x86_64-linux";
-      }
-      {
-        hostname = "nixmac";
-        stateVersion = "25.05";
-        system = "aarch64-linux";
-      }
-    ];
+      user = "andrei";
+      hosts = [
+        {
+          hostname = "protego";
+          stateVersion = "25.05";
+          system = "x86_64-linux";
+        }
+        {
+          hostname = "nixos";
+          stateVersion = "25.05";
+          system = "x86_64-linux";
+        }
+        {
+          hostname = "t480s";
+          stateVersion = "25.05";
+          system = "x86_64-linux";
+        }
+        {
+          hostname = "mcserver";
+          stateVersion = "25.05";
+          system = "x86_64-linux";
+        }
+        {
+          hostname = "nixmac";
+          stateVersion = "25.05";
+          system = "aarch64-linux";
+        }
+      ];
 
-    makeSystem =
-      {
-        hostname,
-        system,
-        stateVersion,
-      }:
-      inputs.nixpkgs.lib.nixosSystem {
-        inherit system;
+      makeSystem =
+        {
+          hostname,
+          system,
+          stateVersion,
+        }:
+        inputs.nixpkgs.lib.nixosSystem {
+          inherit system;
 
-        specialArgs = {
-          wrappers = inputs.wrappers;
-          pinnedPkgs = import inputs.pinned-nixpkgs {
-            inherit system;
-            config = { allowUnfree = true; }; # adjust as needed
+          specialArgs = {
+            wrappers = inputs.wrappers;
+            pinnedPkgs = import inputs.pinned-nixpkgs {
+              inherit system;
+              config = {
+                allowUnfree = true;
+              }; # adjust as needed
+            };
+            inherit
+              inputs
+              stateVersion
+              hostname
+              user
+              ;
           };
-          inherit
-            inputs
-            stateVersion
-            hostname
-            user
-            ;
+
+          modules = [
+            inputs.impermanence.nixosModules.impermanence
+            inputs.disko.nixosModules.disko
+            inputs.agenix.nixosModules.default
+            inputs.hjem.nixosModules.default
+            inputs.nix-minecraft.nixosModules.minecraft-servers
+            inputs.nixconf-mcserver.nixosModules.default
+            {
+              nixpkgs.overlays = [ inputs.nix-minecraft.overlay ];
+            }
+            ./hosts/${hostname}/configuration.nix
+            ./hosts/${hostname}/hardware-configuration.nix
+            ./modules
+          ];
         };
 
-        modules = [
-          inputs.impermanence.nixosModules.impermanence
-          inputs.disko.nixosModules.disko
-          inputs.agenix.nixosModules.default
-          inputs.hjem.nixosModules.default
-          ./hosts/${hostname}/configuration.nix
-          ./hosts/${hostname}/hardware-configuration.nix
-          ./modules
-        ];
-      };
+    in
+    {
+      nixosConfigurations = inputs.nixpkgs.lib.foldl' (
+        configs: host:
+        configs
+        // {
+          "${host.hostname}" = makeSystem {
+            inherit (host) hostname system stateVersion;
+          };
+        }
+      ) { } hosts;
+    }
+    // (inputs.flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import inputs.nixpkgs { inherit system; };
+        agenixPkg = inputs.agenix.packages."${system}".default;
+        diskoPkg = inputs.disko.packages."${system}".default;
+        nixosAnywherePkg = inputs.nixos-anywhere.packages."${system}".default;
+      in
+      {
+        packages.install = pkgs.stdenv.mkDerivation {
+          pname = "install";
+          version = "0.1.0";
+          src = ./scripts;
+          buildInputs = [
+            pkgs.yq-go
+            pkgs.git
+            pkgs.age-plugin-fido2-hmac
+            agenixPkg
+            diskoPkg
+          ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
 
-  in {
-    nixosConfigurations = inputs.nixpkgs.lib.foldl' (
-      configs: host:
-      configs
-      // {
-        "${host.hostname}" = makeSystem {
-          inherit (host) hostname system stateVersion;
+          installPhase = ''
+            mkdir -p $out/bin
+            cp install.sh $out/bin/install
+            # Wrap the script to add dependencies to the PATH at runtime
+            wrapProgram $out/bin/install --prefix PATH : ${
+              pkgs.lib.makeBinPath [
+                pkgs.yq-go
+                pkgs.git
+                pkgs.age-plugin-fido2-hmac
+                agenixPkg
+                diskoPkg
+              ]
+            }
+          '';
+        };
+
+        packages.deploy = pkgs.stdenv.mkDerivation {
+          pname = "deploy";
+          version = "0.1.0";
+          src = ./scripts;
+          buildInputs = [
+            pkgs.yq-go
+            pkgs.git
+            nixosAnywherePkg
+            agenixPkg
+          ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+
+          installPhase = ''
+            mkdir -p $out/bin
+            cp deploy.sh $out/bin/deploy
+            # Wrap the script to add dependencies to the PATH at runtime
+            wrapProgram $out/bin/deploy --prefix PATH : ${
+              pkgs.lib.makeBinPath [
+                pkgs.yq-go
+                pkgs.git
+                nixosAnywherePkg
+                agenixPkg
+              ]
+            }
+          '';
         };
       }
-    ) { } hosts;
-  } // (inputs.flake-utils.lib.eachDefaultSystem (system: let
-    pkgs = import inputs.nixpkgs { inherit system; };
-    agenixPkg = inputs.agenix.packages."${system}".default;
-    diskoPkg = inputs.disko.packages."${system}".default;
-    nixosAnywherePkg = inputs.nixos-anywhere.packages."${system}".default;
-  in {
-    packages.install = pkgs.stdenv.mkDerivation {
-      pname = "install";
-      version = "0.1.0";
-      src = ./scripts;
-      buildInputs = [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg diskoPkg ];
-      nativeBuildInputs = [ pkgs.makeWrapper ];
-
-      installPhase = ''
-        mkdir -p $out/bin
-        cp install.sh $out/bin/install
-        # Wrap the script to add dependencies to the PATH at runtime
-        wrapProgram $out/bin/install --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yq-go pkgs.git pkgs.age-plugin-fido2-hmac agenixPkg diskoPkg ]}
-      '';
-    };
-
-    packages.deploy = pkgs.stdenv.mkDerivation {
-      pname = "deploy";
-      version = "0.1.0";
-      src = ./scripts;
-      buildInputs = [ pkgs.yq-go pkgs.git nixosAnywherePkg agenixPkg ];
-      nativeBuildInputs = [ pkgs.makeWrapper ];
-
-      installPhase = ''
-        mkdir -p $out/bin
-        cp deploy.sh $out/bin/deploy
-        # Wrap the script to add dependencies to the PATH at runtime
-        wrapProgram $out/bin/deploy --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yq-go pkgs.git nixosAnywherePkg agenixPkg ]}
-      '';
-    };
-  }));
+    ));
 }
