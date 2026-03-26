@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{
   imports = [
     (import ../disk-config-default.nix { device = "/dev/nvme0n1"; })
   ];
@@ -8,27 +8,34 @@
   minecraft-server.ip = "192.168.1.152";
   wake-on-lan = {
     enable = true;
-    interface = "enp33s0";
+    interface = "enp42s0";
     hass-control.enable = true;
   };
 
   networking = {
     interfaces.enp42s0 = {
-      ipv4.addresses = [{
-        address = "192.168.1.152";
-        prefixLength = 24;
-      }];
+      ipv4.addresses = [
+        {
+          address = "192.168.1.152";
+          prefixLength = 24;
+        }
+      ];
     };
-    interfaces.enp33s0 = {
-      ipv4.addresses = [{
-        address = "192.168.3.152";
-        prefixLength = 24;
-      }];
-    };
+    # interfaces.enp33s0 = {
+    #   ipv4.addresses = [
+    #     {
+    #       address = "192.168.3.152";
+    #       prefixLength = 24;
+    #     }
+    #   ];
+    # };
     defaultGateway = {
       address = "192.168.1.1";
       interface = "enp42s0";
     };
-    nameservers = [ "1.1.1.1" "9.9.9.9" ];
+    nameservers = [
+      "1.1.1.1"
+      "9.9.9.9"
+    ];
   };
 }

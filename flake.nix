@@ -34,7 +34,10 @@
       flake = false;
     };
 
-    nixconf-mcserver.url = "git+ssh://git@github.com/and-mel/nixconf-mcserver.git?ref=main&shallow=1";
+    nixconf-mcserver = {
+      url = "git+ssh://git@github.com/and-mel/nixconf-mcserver.git?ref=main&shallow=1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

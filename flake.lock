@@ -367,10 +367,10 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1774481840,
-        "narHash": "sha256-neeKh28hQRarEEp5Uvc9rHQCRgwE4mu5LDCDLLlXrZc=",
+        "lastModified": 1774482858,
+        "narHash": "sha256-9btuVpgmMhTa3dTpTqX3keFJYZ+OEuzu9o/joOD9rU4=",
         "ref": "main",
-        "rev": "9e19a164e3ee847969f5095cc9385932d23af318",
+        "rev": "a5f2a2dafe6a9c653200b5390ec4216952278f38",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/and-mel/nixconf-mcserver.git"
