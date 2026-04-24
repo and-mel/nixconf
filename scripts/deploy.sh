@@ -12,7 +12,7 @@ secrets_flake="$(realpath ~/secrets)"
 
 temp=$(mktemp -d)
 
-echo ${temp}
+echo "temp: ${temp}"
 
 function cleanup() {
   rm -rf "$temp"
