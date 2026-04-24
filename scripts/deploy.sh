@@ -12,8 +12,6 @@ secrets_flake="$(realpath ~/secrets)"
 
 temp=$(mktemp -d)
 
-echo "temp: ${temp}"
-
 function cleanup() {
   rm -rf "$temp"
 }
@@ -181,6 +179,7 @@ if [ -z "${target_hostname}" ] || [ -z "${target_host}" ]; then
 	help_and_exit
 fi
 
+green "VERSION 2"
 echo "This script will install NixOS on ${target_hostname} at host ${target_host}."
 yellow "generate_ssh_keys"
 generate_ssh_keys
