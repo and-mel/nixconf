@@ -71,6 +71,11 @@
           stateVersion = "25.05";
           system = "aarch64-linux";
         }
+        {
+          hostname = "fractal";
+          stateVersion = "25.11";
+          system = "x86_64-linux";
+        }
       ];
 
       makeSystem =
