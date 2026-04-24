@@ -167,7 +167,7 @@ function nixos_anywhere() {
     yellow "flake ${config_flake}#${target_hostname}"
     yellow "target-host ${target_host}"
     nixos-anywhere --flake "${config_flake}#${target_hostname}" \
-        --extra-files "${temp}" --chown /home/andrei 1000:100 \
+        --extra-files "${temp}" \
         --generate-hardware-config nixos-generate-config "/home/andrei/nixos/hosts/${target_hostname}/hardware-configuration.nix" \
         --target-host "${target_host}"
 }
