@@ -14,7 +14,7 @@
     interfaces.eno1 = {
       ipv4.addresses = [
         {
-          address = "192.168.1.157";
+          address = "192.168.2.157";
           prefixLength = 24;
         }
       ];
