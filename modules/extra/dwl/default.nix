@@ -1,22 +1,31 @@
-{ pkgs, lib, config, wrappers, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  wrappers,
+  ...
+}:
 
 let
-  mkMenu = menu: let
-    configFile = builtins.toFile "config.yaml"
-      (lib.generators.toYAML {} {
-        anchor = "center";
-        background = "#282828d0";
-        color = "#fbf1c7";
-        border = "#8ec07c";
-        separator = " ➜ ";
-        border_width = 2;
-        corner_r = 10;
-        inherit menu;
-      });
+  mkMenu =
+    menu:
+    let
+      configFile = builtins.toFile "config.yaml" (
+        lib.generators.toYAML { } {
+          anchor = "center";
+          background = "#282828d0";
+          color = "#fbf1c7";
+          border = "#8ec07c";
+          separator = " ➜ ";
+          border_width = 2;
+          corner_r = 10;
+          inherit menu;
+        }
+      );
     in
-      pkgs.writeScript "wlr-menu" ''
-        exec ${pkgs.wlr-which-key}/bin/wlr-which-key ${configFile}
-      '';
+    pkgs.writeScript "wlr-menu" ''
+      exec ${pkgs.wlr-which-key}/bin/wlr-which-key ${configFile}
+    '';
 
   programsMenu = mkMenu [
     {
@@ -67,24 +76,31 @@ let
     };
   '';
 
-  customDwlPackage = (pkgs.dwl.override {
-    inherit configH;
-  }).overrideAttrs (oldAttrs: {
-    patches = (oldAttrs.patches or []) ++ [
-      ./movestack.patch
-      ./cursortheme.patch
-      ./restore-monitor.patch
-    ];
-    buildInputs = oldAttrs.buildInputs or [] ++ [ pkgs.libdrm pkgs.fcft ];
-  });
+  customDwlPackage =
+    (pkgs.dwl.override {
+      inherit configH;
+    }).overrideAttrs
+      (oldAttrs: {
+        patches = (oldAttrs.patches or [ ]) ++ [
+          ./movestack.patch
+          ./cursortheme.patch
+          ./restore-monitor.patch
+        ];
+        buildInputs = oldAttrs.buildInputs or [ ] ++ [
+          pkgs.libdrm
+          pkgs.fcft
+        ];
+      });
 
   swayIdle = wrappers.lib.wrapPackage {
     inherit pkgs;
     package = pkgs.swayidle;
     flags = {
-      "-C" = toString (pkgs.writeText "config" ''
-        before-sleep 'swaylock -f -c 000000'
-      '');
+      "-C" = toString (
+        pkgs.writeText "config" ''
+          before-sleep 'swaylock -f -c 000000'
+        ''
+      );
     };
   };
 
@@ -183,7 +199,7 @@ in
 
     environment.sessionVariables = {
       GTK_THEME = "Adwaita-dark";
-      XDG_CURRENT_DESKTOP="wlroots";
+      XDG_CURRENT_DESKTOP = "wlroots";
     };
 
     environment.systemPackages = [

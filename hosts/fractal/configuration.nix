@@ -10,6 +10,8 @@
     hass-control.enable = true;
   };
 
+  vpn-server.enable = true;
+
   networking = {
     interfaces.eno1 = {
       ipv4.addresses = [
@@ -19,14 +21,6 @@
         }
       ];
     };
-    # interfaces.enp33s0 = {
-    #   ipv4.addresses = [
-    #     {
-    #       address = "192.168.3.152";
-    #       prefixLength = 24;
-    #     }
-    #   ];
-    # };
     defaultGateway = {
       address = "192.168.2.222";
       interface = "eno1";
