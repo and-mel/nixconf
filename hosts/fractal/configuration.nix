@@ -12,6 +12,8 @@
 
   vpn-server.enable = true;
 
+  syncthing.enable = true;
+
   networking = {
     interfaces.eno1 = {
       ipv4.addresses = [

@@ -25,7 +25,7 @@
     users.users.xray = {
       isSystemUser = true;
       group = "xray";
-      extraGroups = [ "acme" ]; # Now this will work!
+      extraGroups = [ "acme" ];
     };
     users.groups.xray = {};
     users.users.nginx.extraGroups = [ "xray" "acme" ];
@@ -84,7 +84,6 @@
       enable = true;
       virtualHosts."${private.xray.domain}" = {
         default = true;
-        # forceSSL = true;
         root = "/var/www/html";
         enableACME = true;
         addSSL = false;
@@ -113,11 +112,4 @@
       "L+ /var/www/html/index.html - - - - ${./index.html}"
     ];
   };
-
-  #   environment.systemPackages = with pkgs; [
-  #     shadowsocks-rust
-  #     cloak-pt
-  #     wstunnel
-  #   ];
-  # };
 }
