@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   imports = [
     (import ../disk-config-default.nix { device = "/dev/nvme0n1"; })
   ];
@@ -11,7 +12,9 @@
       { NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
     '';
   };
+  boot.initrd.kernelModules = [ "i915" ];
   cliApps.enable = true;
   apps.enable = true;
   games.enable = true;
+  syncthing.enable = true;
 }

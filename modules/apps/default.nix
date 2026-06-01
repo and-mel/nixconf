@@ -1,4 +1,10 @@
-{ lib, config, user, pkgs, ... }: {
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+{
   options = {
     apps.enable = lib.mkEnableOption "enables core apps";
     cliApps.enable = lib.mkEnableOption "enables core CLIs";
@@ -9,17 +15,25 @@
     ./kitty
     ./firefox.nix
     ./git.nix
+    ./zen-browser.nix
+    ./steam.nix
   ];
 
   config = {
-    environment.systemPackages = with pkgs;
-    lib.optionals config.apps.enable [
-      zed-editor
-      vesktop
-    ] ++ lib.optionals config.cliApps.enable [
-      neovim
-    ] ++ lib.optionals config.games.enable [
-      prismlauncher
-    ];
+    environment.systemPackages =
+      with pkgs;
+      lib.optionals config.apps.enable [
+        zed-editor
+        keepassxc
+        spotify
+        xfce.thunar
+        jetbrains.idea
+      ]
+      ++ lib.optionals config.cliApps.enable [
+        neovim
+      ]
+      ++ lib.optionals config.games.enable [
+        prismlauncher
+      ];
   };
 }

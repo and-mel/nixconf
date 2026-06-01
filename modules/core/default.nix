@@ -1,4 +1,13 @@
-{ hostname, stateVersion, lib, config, user, pkgs, ... }: {
+{
+  hostname,
+  stateVersion,
+  lib,
+  config,
+  user,
+  pkgs,
+  ...
+}:
+{
   imports = [
     ./boot.nix
     ./zsh.nix
@@ -13,7 +22,10 @@
     firewall.enable = true;
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nixpkgs.config.allowUnfree = true;
 
   time.timeZone = "America/New_York";
@@ -21,8 +33,14 @@
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
     earlySetup = true;
-    font = "Lat2-Terminus16";
     keyMap = "us";
+
+    # Install the dedicated terminus package to the console environment
+    packages = [ pkgs.terminus_font ];
+
+    # Use the official Terminus naming scheme:
+    # 'ter-v' (video variant), '16' (size), 'n' (normal) or 'b' (bold)
+    font = "ter-v20b";
   };
 
   programs.nh = {
@@ -42,7 +60,10 @@
   users.mutableUsers = false;
   users.users.${user} = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
     hashedPasswordFile = config.age.secrets.passwd-andrei.path;
     openssh.authorizedKeys.keys = [
       "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIACw2AMBYcoTWNCWZKYlliS3Naw4kFuhAxFr3LDmsdnBAAAABHNzaDo="

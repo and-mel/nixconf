@@ -100,7 +100,7 @@ static const uint32_t send_events_mode = LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
 LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT
 LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE
 */
-static const enum libinput_config_accel_profile accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT;
+static const enum libinput_config_accel_profile accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE;
 static const double accel_speed = 1.0;
 
 /* You can choose between:
@@ -120,6 +120,9 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+/* Add these commands above your keys array */
+static const char *snap_region[] = { "/bin/sh", "-c", "if geo=$(slurp); then eval grim -g \\\"$geo\\\" - | wl-copy; fi", NULL };
+static const char *snap_full[]   = { "/bin/sh", "-c", "grim - | wl-copy", NULL };
 
 /* commands */
 static const char *termcmd[] = { "kitty", NULL };
@@ -134,6 +137,8 @@ static const Key keys[] = {
 	{ 0,                         XKB_KEY_XF86AudioRaiseVolume, spawn, {.v = volumeup   } },
 	{ 0,                         XKB_KEY_XF86AudioLowerVolume, spawn, {.v = volumedown } },
 	{ 0,                         XKB_KEY_XF86AudioMute, spawn, {.v = mutevolume } },
+	{ 0,                         XKB_KEY_Print,      spawn,          {.v = snap_region} },
+	{ WLR_MODIFIER_SHIFT,        XKB_KEY_Print,      spawn,          {.v = snap_full} },
 	{ MODKEY,                    XKB_KEY_r,          spawn,          {.v = menucmd} },
 	{ MODKEY,                    XKB_KEY_Return,     spawn,          {.v = termcmd} },
 	{ MODKEY,                    XKB_KEY_XF86AudioPlay,      spawn,  SHCMD("playerctl play-pause") },
@@ -149,11 +154,12 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
 	{ MODKEY |WLR_MODIFIER_SHIFT,                    XKB_KEY_Return,     zoom,           {0} },
 	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
+	{ MODKEY,                    XKB_KEY_c,          killclient,     {0} },
 	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
+	{ MODKEY,                    XKB_KEY_e,          togglefullscreen, {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
 	{ MODKEY,                    XKB_KEY_s,         togglefullscreen, {0} },
 	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },

@@ -29,6 +29,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mysecrets = {
       url = "git+ssh://git@github.com/and-mel/nixconf-secrets.git?ref=main&shallow=1";
       flake = false;
