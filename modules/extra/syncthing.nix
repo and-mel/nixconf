@@ -71,10 +71,6 @@
         };
       };
 
-      environment.persistence."/nix/persist".directories = [
-        "/var/lib/syncthing"
-      ];
-
       systemd.tmpfiles.rules = [
         "d /home/${user}/KeePassXC 0700 ${user} users -"
       ];

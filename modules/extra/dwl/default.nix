@@ -3,10 +3,16 @@
   lib,
   config,
   wrappers,
+  inputs,
   ...
 }:
 
 let
+  pkgs-25-11 = import inputs.nixpkgs-25-11 {
+    system = pkgs.stdenv.hostPlatform.system;
+    config.allowFree = true;
+  };
+
   mkMenu =
     menu:
     let
@@ -141,12 +147,11 @@ let
   '';
 
   customDwlPackage =
-    (pkgs.dwl.override {
+    (pkgs-25-11.dwl.override {
       inherit configH;
     }).overrideAttrs
       (oldAttrs: {
         patches = (oldAttrs.patches or [ ]) ++ [
-          ./movestack.patch
           ./cursortheme.patch
           ./restore-monitor.patch
         ];
@@ -173,7 +178,7 @@ let
     dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=wlroots
     systemctl --user restart xdg-desktop-portal
 
-    ${pkgs.xorg.xsetroot}/bin/xsetroot -cursor_name Bibata-Modern-Classic
+    ${pkgs.xsetroot}/bin/xsetroot -cursor_name Bibata-Modern-Classic
     ${lib.getExe kanshi} &
     ${pkgs.i3status}/bin/i3status -c ${i3statusConfig} | ${pkgs.dwlb}/bin/dwlb -status-stdin all & ${pkgs.dwlb}/bin/dwlb -custom-title -font "monospace:size=14" &
     ${swayIdle}/bin/swayidle &
@@ -275,6 +280,8 @@ in
       pkgs.grim
       pkgs.wlr-which-key
       pkgs.xsetroot
+      pkgs.playerctl
+      pkgs.brightnessctl
       swayIdle
       kanshi
     ];

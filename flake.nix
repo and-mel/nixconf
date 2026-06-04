@@ -3,11 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs-25-11.url = "github:nixos/nixpkgs/nixos-25.11";
     # pinned-nixpkgs.url = "github:nixos/nixpkgs/a82ccc39b39b621151d6732718e3e250109076fa";
-    wrappers.url = "github:Lassulus/wrappers";
     impermanence.url = "github:nix-community/impermanence";
     flake-utils.url = "github:numtide/flake-utils";
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
+    preservation.url = "github:nix-community/preservation";
+
+    wrappers = {
+      url = "github:Lassulus/wrappers";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     disko = {
       url = "github:nix-community/disko";
@@ -153,6 +159,7 @@
             pkgs.yq-go
             pkgs.git
             pkgs.age-plugin-fido2-hmac
+            pkgs.nix-output-monitor
             agenixPkg
             diskoPkg
           ];
@@ -167,6 +174,7 @@
                 pkgs.yq-go
                 pkgs.git
                 pkgs.age-plugin-fido2-hmac
+                pkgs.nix-output-monitor
                 agenixPkg
                 diskoPkg
               ]

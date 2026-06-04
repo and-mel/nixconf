@@ -27,10 +27,11 @@
         keepassxc
         spotify
         xfce.thunar
-        jetbrains.idea
+        # jetbrains.idea
       ]
       ++ lib.optionals config.cliApps.enable [
         neovim
+        direnv
       ]
       ++ lib.optionals config.games.enable [
         prismlauncher

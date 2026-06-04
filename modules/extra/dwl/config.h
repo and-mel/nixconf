@@ -118,8 +118,6 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 	{ MODKEY|WLR_MODIFIER_SHIFT, SKEY,           tag,             {.ui = 1 << TAG} }, \
 	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,SKEY,toggletag, {.ui = 1 << TAG} }
 
-/* helper for spawning shell commands in the pre dwm-5.0 fashion */
-#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 /* Add these commands above your keys array */
 static const char *snap_region[] = { "/bin/sh", "-c", "if geo=$(slurp); then eval grim -g \\\"$geo\\\" - | wl-copy; fi", NULL };
 static const char *snap_full[]   = { "/bin/sh", "-c", "grim - | wl-copy", NULL };
@@ -130,6 +128,9 @@ static const char *menucmd[] = { "wmenu-run", "-f", "monospace 14", "-l", "10", 
 static const char *volumeup[]      = { "wpctl",   "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+",  NULL };
 static const char *volumedown[]    = { "wpctl",   "set-volume",  "@DEFAULT_AUDIO_SINK@", "5%-",  NULL };
 static const char *mutevolume[]    = { "wpctl",   "set-mute",  "@DEFAULT_AUDIO_SINK@",  "toggle",  NULL };
+static const char *playpause[] = { "playerctl", "play-pause", NULL };
+static const char *brightness_up[]   = { "brightnessctl", "set", "+5%", NULL };
+static const char *brightness_down[] = { "brightnessctl", "set", "5%-", NULL };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
@@ -141,15 +142,17 @@ static const Key keys[] = {
 	{ WLR_MODIFIER_SHIFT,        XKB_KEY_Print,      spawn,          {.v = snap_full} },
 	{ MODKEY,                    XKB_KEY_r,          spawn,          {.v = menucmd} },
 	{ MODKEY,                    XKB_KEY_Return,     spawn,          {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_XF86AudioPlay,      spawn,  SHCMD("playerctl play-pause") },
+	{ MODKEY,                    XKB_KEY_XF86AudioPlay,      spawn,  {.v = playpause} },
 	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
+//	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
+//	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
 //	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
 //	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
     { MODKEY,                    XKB_KEY_d,          spawn,          {.v = programsmenu} },
     { MODKEY,                    XKB_KEY_q,          spawn,          {.v = powermenu} },
+    { 0,                         XKB_KEY_XF86MonBrightnessUp,    spawn,          {.v = brightness_up} },
+    { 0,                         XKB_KEY_XF86MonBrightnessDown,  spawn,          {.v = brightness_down} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
 	{ MODKEY |WLR_MODIFIER_SHIFT,                    XKB_KEY_Return,     zoom,           {0} },

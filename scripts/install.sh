@@ -194,7 +194,7 @@ function install_nixos() {
   disko --mode destroy,format,mount -f "${temp}/nixos#${target_hostname}"
   copy_files
   green "Installing NixOS"
-  nixos-install --flake "${temp}/nixos#${target_hostname}" --no-root-password
+  nixos-install --flake "${temp}/nixos#${target_hostname}" --no-root-password |& nom
   green "NixOS is installed!"
 }
 

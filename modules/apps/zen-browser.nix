@@ -44,6 +44,9 @@
         "signon.autofillForms" = false;
         "signon.generation.enabled" = false;
         "signon.management.page.enabled" = false;
+
+        "permissions.default.shortcuts" = 3;
+        "browser.tabs.unloadOnLowMemory" = true;
       };
 
       extensions = [
