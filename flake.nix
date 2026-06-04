@@ -2,7 +2,7 @@
   description = "NixOS Configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-25-11.url = "github:nixos/nixpkgs/nixos-25.11";
     # pinned-nixpkgs.url = "github:nixos/nixpkgs/a82ccc39b39b621151d6732718e3e250109076fa";
     impermanence.url = "github:nix-community/impermanence";

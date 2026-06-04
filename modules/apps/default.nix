@@ -26,7 +26,7 @@
         zed-editor
         keepassxc
         spotify
-        xfce.thunar
+        thunar
         # jetbrains.idea
       ]
       ++ lib.optionals config.cliApps.enable [
