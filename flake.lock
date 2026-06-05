@@ -346,10 +346,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1780670195,
-        "narHash": "sha256-+sQ+lyEN7Y8CXf543tPQ0fgqJqJzg1G6nri0KO1EukQ=",
+        "lastModified": 1780692645,
+        "narHash": "sha256-30othFh98EewIiClZ4JGMMir8IancAEd+1SWUFpVwEE=",
         "ref": "main",
-        "rev": "9090cfbff96b68ab2dea68bebdebfe90a992e94f",
+        "rev": "db968c2cca8db2ee64abb0ac415736208d68e013",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/and-mel/nixconf-mcserver.git"
