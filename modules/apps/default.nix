@@ -13,7 +13,6 @@
 
   imports = [
     ./kitty
-    ./firefox.nix
     ./git.nix
     ./zen-browser.nix
     ./steam.nix

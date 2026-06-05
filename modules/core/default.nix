@@ -74,7 +74,23 @@
     age-plugin-fido2-hmac
     nil
     nixd
+    cifs-utils
+    samba
   ];
+
+  fileSystems."/mnt/share" = {
+    device = "//ds2/home";
+    fsType = "cifs";
+    options = [
+      "x-systemd.automount" # Mounts automatically when accessed
+      "noauto" # Don't fail boot if the server is offline
+      "nofail" # Allows boot to continue if mounting fails
+      "uid=1000" # Changes owner of files to your NixOS user UID
+      "gid=100" # Changes group to your NixOS user GID
+      "credentials=${config.age.secrets.passwd-ds2.path}" # Path to your username/password
+    ];
+  };
+  boot.supportedFilesystems = [ "cifs" ];
 
   users.defaultUserShell = pkgs.zsh;
 

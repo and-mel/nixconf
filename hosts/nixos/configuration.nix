@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{
   imports = [
     (import ../disk-config-default.nix { device = "/dev/nvme0n1"; })
   ];
@@ -24,4 +24,12 @@
 
   boot.initrd.kernelModules = [ "amdgpu" ];
   syncthing.enable = true;
+
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+  services.printing.enable = true;
+  services.gvfs.enable = true;
 }
