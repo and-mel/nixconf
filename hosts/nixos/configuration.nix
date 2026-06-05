@@ -22,4 +22,6 @@
     };
     firewall.allowedUDPPorts = [ 9 ];
   };
+
+  syncthing.enable = true;
 }

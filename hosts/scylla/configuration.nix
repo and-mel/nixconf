@@ -14,5 +14,4 @@
   cliApps.enable = true;
   apps.enable = true;
   games.enable = true;
-  syncthing.enable = true;
 }
