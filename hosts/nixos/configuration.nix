@@ -14,7 +14,6 @@
   cliApps.enable = true;
   apps.enable = true;
   games.enable = true;
-  minecraft-server.enable = true;
 
   networking = {
     interfaces.enp42s0 = {
@@ -23,5 +22,6 @@
     firewall.allowedUDPPorts = [ 9 ];
   };
 
+  boot.initrd.kernelModules = [ "amdgpu" ];
   syncthing.enable = true;
 }

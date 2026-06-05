@@ -240,10 +240,10 @@
     "mysecrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1780152973,
-        "narHash": "sha256-EHooB/3WTVaRXolEy1ozyT5Mik99NpWM3WgZT1jIK4Y=",
+        "lastModified": 1780669023,
+        "narHash": "sha256-2AHqlZWq1fuNLRMYzPmlIh0sC5tM0bsnTgulA6M4i4o=",
         "ref": "main",
-        "rev": "aaecc487437543f96aa5e4bc43bef01df80c9e18",
+        "rev": "3de54eab29e92c7134648795346dc48be05b00ca",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/and-mel/nixconf-secrets.git"
@@ -346,10 +346,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1780153492,
-        "narHash": "sha256-hpUR5/LzMZ2AjSTmjEz0gat7xXBXLeGWs225pV7uB04=",
+        "lastModified": 1780670051,
+        "narHash": "sha256-08RPOUhIUFmZku6f9emp9afLBDZOCZt3QTwL1n/leSA=",
         "ref": "main",
-        "rev": "176a73febf5b838ceca8f0e71535ece82cd560dd",
+        "rev": "261c4cf964cd600d5858f811b800d0502280dce0",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/and-mel/nixconf-mcserver.git"
@@ -663,11 +663,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779946062,
-        "narHash": "sha256-M/2bCPYjiBTkDNV29J/00z10RM3yYnL9X74RqAHDme0=",
+        "lastModified": 1780637620,
+        "narHash": "sha256-ngPdHinPyF0AMxRr32qt+TZCv0sagmooBW14u6DfjSU=",
         "owner": "youwen5",
         "repo": "zen-browser-flake",
-        "rev": "2e2c38ba20a3d614d0196e0aa44851547306e861",
+        "rev": "8c62bc6a72ac5a5b8d1b41b2b88dfed9d9932c48",
         "type": "github"
       },
       "original": {
