@@ -87,6 +87,11 @@
           stateVersion = "25.11";
           system = "x86_64-linux";
         }
+        {
+          hostname = "scylla";
+          stateVersion = "26.05";
+          system = "x86_64-linux";
+        }
       ];
 
       makeSystem =

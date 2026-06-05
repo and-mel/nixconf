@@ -53,6 +53,13 @@
             # If THIS host is an introducer, it tells others about the mesh.
             introducer = if name == "fractal" then true else false;
             autoAcceptFolders = if name == "fractal" then true else false;
+            addresses =
+              if name == "fractal" then
+                [
+                  "tcp://192.168.2.157"
+                ]
+              else
+                [ ];
           }) otherDevices;
           options = {
             globalAnnounceEnabled = false; # No Global Discovery
