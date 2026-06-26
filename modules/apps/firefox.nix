@@ -1,5 +1,15 @@
-{ lib, config, pkgs, ... }: {
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+{
   config = lib.mkIf config.apps.enable {
+    #probably a bad idea but im adding this here anyway
+    programs.xfconf.enable = true; # Allows Thunar to save settings/themes
+    services.tumbler.enable = true; # Thumbnail support for images
+
     programs.firefox = {
       enable = true;
       package = pkgs.firefox-esr;
@@ -14,11 +24,13 @@
           };
           "uBlock0@raymondhill.net" = {
             "installation_mode" = "force_installed";
-            "install_url" = "https://addons.mozilla.org/firefox/downloads/latest/uBlock0@raymondhill.net/latest.xpi";
+            "install_url" =
+              "https://addons.mozilla.org/firefox/downloads/latest/uBlock0@raymondhill.net/latest.xpi";
           };
           "{d634138d-c276-4fc8-924b-40a0ea21d284}" = {
             "installation_mode" = "force_installed";
-            "install_url" = "https://addons.mozilla.org/firefox/downloads/latest/{d634138d-c276-4fc8-924b-40a0ea21d284}/latest.xpi";
+            "install_url" =
+              "https://addons.mozilla.org/firefox/downloads/latest/{d634138d-c276-4fc8-924b-40a0ea21d284}/latest.xpi";
           };
           "firefox-compact-dark@mozilla.org" = {
             "installation_mode" = "force_installed";

@@ -14,6 +14,7 @@
   imports = [
     ./kitty
     ./git.nix
+    ./obs-studio.nix
     ./zen-browser.nix
     ./steam.nix
   ];
@@ -22,10 +23,19 @@
     environment.systemPackages =
       with pkgs;
       lib.optionals config.apps.enable [
+        (writeShellScriptBin "libreoffice" ''
+          export SAL_USE_VCLPLUGIN=kf6
+          exec ${libreoffice-qt}/bin/libreoffice "$@"
+        '')
+        hunspell
+        hunspellDicts.en_US
         zed-editor
         keepassxc
         spotify
         thunar
+        mpv
+        losslesscut-bin
+        adwaita-icon-theme
         # jetbrains.idea
       ]
       ++ lib.optionals config.cliApps.enable [
@@ -34,6 +44,7 @@
       ]
       ++ lib.optionals config.games.enable [
         prismlauncher
+        lutris
       ];
   };
 }

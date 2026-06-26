@@ -1,6 +1,6 @@
-{
+{ pkgs, ... }: {
   imports = [
-    (import ../disk-config-default.nix { device = "/dev/nvme0n1"; })
+    (import ../disk-config-default.nix { device = "/dev/sda"; })
   ];
 
   dwl = {
@@ -14,4 +14,6 @@
   cliApps.enable = true;
   apps.enable = true;
   games.enable = true;
+
+  environment.systemPackages = [ pkgs.jetbrains.idea ];
 }

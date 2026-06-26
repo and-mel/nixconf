@@ -210,6 +210,7 @@ in
 
   config = lib.mkIf config.dwl.enable {
     hardware.graphics.enable = true;
+    hardware.graphics.extraPackages = [ pkgs.obs-studio-plugins.obs-vkcapture ];
 
     services.pipewire = {
       enable = true;

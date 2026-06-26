@@ -32,4 +32,9 @@
   };
   services.printing.enable = true;
   services.gvfs.enable = true;
+
+  services.hardware.openrgb = {
+    enable = true;
+    motherboard = "amd";
+  };
 }

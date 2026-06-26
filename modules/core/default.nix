@@ -49,6 +49,7 @@
   };
 
   services.speechd.enable = lib.mkForce false;
+  security.rtkit.enable = true;
 
   services.openssh = {
     enable = true;
