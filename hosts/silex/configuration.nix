@@ -15,6 +15,11 @@
   apps.enable = true;
   games.enable = true;
   syncthing.enable = true;
+
+  vpn-client = {
+    enable = true;
+    login = "silex";
+  };
 }
 
 #      { "HDMI-A-2",    0.55f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   1920,  0 },

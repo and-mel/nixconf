@@ -6,6 +6,7 @@
     ./vpn-server
     ./fonts.nix
     ./syncthing.nix
+    ./vpn-client.nix
     ./wakeonlan.nix
   ];
 }
