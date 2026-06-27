@@ -14,6 +14,12 @@
   cliApps.enable = true;
   apps.enable = true;
   games.enable = true;
+  syncthing.enable = true;
+
+  vpn-client = {
+    enable = true;
+    login = "scylla";
+  };
 
   environment.systemPackages = [ pkgs.jetbrains.idea ];
 }
