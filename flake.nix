@@ -68,7 +68,7 @@
           system = "x86_64-linux";
         }
         {
-          hostname = "t480s";
+          hostname = "silex";
           stateVersion = "25.05";
           system = "x86_64-linux";
         }
