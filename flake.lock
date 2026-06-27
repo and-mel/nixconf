@@ -239,10 +239,10 @@
     "mysecrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1782525076,
-        "narHash": "sha256-y4GtO3tHZBn9Pc1H0yWPSw9pT8jUaFixfsTurdB29Ks=",
+        "lastModified": 1782527988,
+        "narHash": "sha256-nd23wsOtkrx4eWhZ+hoSA89AyvyPlN3IdQE4tsY1Lc4=",
         "ref": "main",
-        "rev": "cac00111cdf85fe4ef674924e0c3c0e4245bea7a",
+        "rev": "0c8291076df5bed25cc03322c27cf195df514475",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/and-mel/nixconf-secrets.git"
@@ -324,10 +324,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1782527410,
-        "narHash": "sha256-ltyKbtOtbhxusf91YOMM4blzBGU42pZ1hVkzU5z/zzU=",
+        "lastModified": 1782528962,
+        "narHash": "sha256-IafYHv6lvTJAInRkMvOQ5b+gQvVtWz+jY3oglA67Zk0=",
         "ref": "main",
-        "rev": "1e669b2ac2bcdf63f4f03c0255597b5d3709255b",
+        "rev": "40174936f26f771ee1a2805a7e041af2cccc4fd5",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/and-mel/nixconf-mcserver.git"
